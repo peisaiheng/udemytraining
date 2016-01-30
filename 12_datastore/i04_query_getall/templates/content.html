@@ -1,0 +1,25 @@
+<!-- content.html -->
+{{define "content"}}
+{{template "header"}}
+<div class="container">
+	<h1>Good morning, {{ .Username }}. Here's your list from DB</h1>
+	<ul>
+		{{ range .ListOfAnimals }}
+		<li>{{ .Term }} : {{ .Definition }}</li>
+		{{ end }}
+	</ul>
+	<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+		<form action="" method="POST" role="form" action="/words">
+			<legend>Form title</legend>
+			<div class="form-group">
+				<label for="animal">Animal</label>
+				<input type="text" name="term" class="form-control" id="term" placeholder="Animal spieces">
+				<label>Definition</label><br />
+				<textarea class="form-control" rows="3" name="definition"></textarea>
+			</div>
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+	</div>
+</div>
+{{template "footer"}}
+{{end}}
