@@ -9,8 +9,10 @@ import (
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/log"
 	"google.golang.org/appengine/memcache"
+	"golang.org/x/crypto/bcrypt"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 
 func checkUsername(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
@@ -34,13 +36,21 @@ func checkUsername(res http.ResponseWriter, req *http.Request, _ httprouter.Para
 
 func createUser(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	ctx := appengine.NewContext(req)
+
+	// Creating a hashed pw to be stored in db
+	hashedPass, err := bcrypt.GenerateFromPassword([]byte(req.FormValue("password")), bcrypt.DefaultCost)
+	if err != nil {
+		log.Errorf(ctx, "Error creating hpassword: %v", err)
+		http.Error(res, err.Error(), 500)
+		return
+	}
 	user := User{
 		Email:    req.FormValue("email"),
 		UserName: req.FormValue("username"),
-		Password: req.FormValue("password"),
+		Password: req.FormValue(hashedPass),
 	}
 	key := datastore.NewKey(ctx, "Users", user.UserName, 0, nil)
-	key, err := datastore.Put(ctx, key, &user)
+	key, err = datastore.Put(ctx, key, &user)
 	if err != nil {
 		log.Errorf(ctx, "error adding todo: %v", err)
 		http.Error(res, err.Error(), 500)
@@ -106,6 +116,28 @@ func loginProcess(res http.ResponseWriter, req *http.Request, _ httprouter.Param
 		http.Redirect(res, req, "/", 302)
 	}
 }
-//func logout(res http.Response, req *http.Request, _ httprouter.Params) {
-//
-//}
+func logout(res http.Response, req *http.Request, _ httprouter.Params) {
+	ctx := appengine.NewContext(req)
+
+	// Check for session cookie
+	cookie, err := req.Cookie("session")
+	// cookie is not set
+	if err != nil {
+		http.Redirect(res, req, "/", 302)
+		return
+	}
+
+	//clear MEMCACHE and COOKIE if set
+	sd := memcache.Item{
+		Key:		cookie.Value,
+		Value:		[]byte(""),
+		Expiration: time.Duration(1 * time.Microsecond),
+	}
+	memcache.Set(ctx, &sd)
+
+	cookie.MaxAge = -1
+	http.SetCookie(res, cookie)
+
+	// redirect
+	http.Redirect(res, req, "/", 302)
+}
