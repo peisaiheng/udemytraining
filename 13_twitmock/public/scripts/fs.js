@@ -1,7 +1,7 @@
-var form = $("#SignupForm");
-var un = $("#inputUsername");
-var p1 = $("#inputPassword");
-var p2 = $("#inputPasswordCfm");
+var form 	= $("#SignupForm");
+var un 		= $("#inputUsername");
+var p1	 	= $("#inputPassword");
+var p2 		= $("#inputPasswordCfm");
 
 un.on('input', (function() {
 	$("#helpBlock1").html('')

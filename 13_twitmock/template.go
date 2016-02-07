@@ -10,8 +10,14 @@ func serveTemplate(res http.ResponseWriter, req *http.Request, templateName stri
 	if err != nil {
 		// err, Not logged in
 		// execute template with empty session data
-		tpl.ExecuteTemplate(res, templateName, SessionData{})
+		tpl.ExecuteTemplate(res, templateName, &SessionData{})
 		return
+	}
+
+	// Redirect user to home page
+	// if logged in users goes to signup page
+	if templateName == "signup.html" {
+		http.Redirect(res, req, "/", 302)
 	}
 
 	//logged in

@@ -16,7 +16,7 @@
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
-          <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle collapsed"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="./index.html" class="navbar-brand">Project name</a>
+          <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle collapsed"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="/" class="navbar-brand">Project name</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
@@ -25,9 +25,9 @@
             <li><a href="#contact">Contact</a></li>
             <li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Dropdown<span class="caret"></span></a>
               <ul role="menu" class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
+                <li><a href="#">{{.Email}}</a></li>
+                <li><a href="#">{{.UserName}}</a></li>
+                <li><a href="#">{{.LoggedIn}}</a></li>
                 <li class="divider"></li>
                 <li class="dropdown-header">Nav header</li>
                 <li><a href="#">Separated link</a></li>
@@ -35,6 +35,11 @@
               </ul>
             </li>
           </ul>
+          {{if .LoggedIn}}
+          <form action="/api/logout" method="get" class="navbar-form navbar-right">
+            <button type="submit" class="btn btn-success">Sign out</button>
+          </form>
+          {{else}}
           <form action="/api/login" method="post" class="navbar-form navbar-right">
             <div class="form-group">
               <input id="Username" name="username" type="text" placeholder="Username" class="form-control">
@@ -42,39 +47,42 @@
             <div class="form-group">
               <input id="Password" name="password" type="password" placeholder="Password" class="form-control">
             </div>
-            <button type="submit" class="btn btn-success">Sign in</button><a href="/form/signup">
-              <button type="button" class="btn btn-primary">Sign up</button></a>
+              <button type="submit" class="btn btn-success">Sign in</button>
+              <a href="/form/signup">
+                  <button type="button" class="btn btn-primary">Sign up</button>
+              </a>
           </form>
+          {{end}}
         </div>
       </div>
     </nav>
   </div>
   {{end}}
   {{define "footer"}}<footer class="Site-footer">
-    <div class="container Footer">
-      <div class="row flexrow">
-        <div class="flexrow-logo"><img src="./img/logo-inverse.png" class="footer-logo img-responsive"></div>
-        <div class="flexrow-item">
-          <h4>DISCOVER</h4>
-          <ul class="list-unstyled list-menu">
+      <div class="container Footer">
+        <div class="row flexrow">
+          <div class="flexrow-logo"><img src="./img/logo-inverse.png" class="footer-logo img-responsive"></div>
+          <div class="flexrow-item">
+            <h4>DISCOVER</h4>
+            <ul class="list-unstyled list-menu">
             <li><a href="/" target="_blank">Home</a></li>
             <li><a href="/billionaires/" target="_blank">Discover</a></li>
             <li><a href="/dashboard/" target="_blank">Create</a></li>
           </ul>
         </div>
-        <div class="flexrow-item">
-          <h4>LEGAL</h4>
+          <div class="flexrow-item">
+            <h4>LEGAL</h4>
         </div>
-        <div class="flexrow-item">
-          <h4>ABOUT</h4>
+          <div class="flexrow-item">
+            <h4>ABOUT</h4>
         </div>
-        <div class="flexrow-item">
-          <h4> </h4>
+          <div class="flexrow-item">
+            <h4> </h4>
         </div>
       </div>
-      <div class="row Footer-flexrow">
-        <div class="flexrow-item">
-          <p class="pull-left">Copyright &copy; Finlytics Pte Ltd.</p>
+        <div class="row Footer-flexrow">
+          <div class="flexrow-item">
+            <p class="pull-left">Copyright &copy; Finlytics Pte Ltd.</p>
         </div>
       </div>
     </div>
@@ -82,5 +90,5 @@
   <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha256-KXn5puMvxCw+dAYznun+drMdG1IFl3agK0p/pqT9KAo= sha512-2e8qq0ETcfWRI4HJBzQiA3UoyFk6tbNyG+qSaIBZLyW9Xf3sWZHN/lxe9fTh1U45DpPf07yj94KsUHHWe4Yk1A==" crossorigin="anonymous"></script>
   <script src="/public/scripts/fs.js"></script>
-</body></html>
+  </body></html>
 {{end}}

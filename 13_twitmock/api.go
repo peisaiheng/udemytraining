@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"github.com/nu7hatch/gouuid"
+	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/log"
 	"google.golang.org/appengine/memcache"
-	"golang.org/x/crypto/bcrypt"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -29,9 +29,8 @@ func checkUsername(res http.ResponseWriter, req *http.Request, _ httprouter.Para
 		// there is an err, there is a NO user
 		fmt.Fprint(res, "false")
 		return
-	} else {
-		fmt.Fprint(res, "true")
 	}
+	fmt.Fprint(res, "true")
 }
 
 func createUser(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
@@ -47,7 +46,7 @@ func createUser(res http.ResponseWriter, req *http.Request, _ httprouter.Params)
 	user := User{
 		Email:    req.FormValue("email"),
 		UserName: req.FormValue("username"),
-		Password: req.FormValue(hashedPass),
+		Password: string(hashedPass),
 	}
 	key := datastore.NewKey(ctx, "Users", user.UserName, 0, nil)
 	key, err = datastore.Put(ctx, key, &user)
@@ -86,8 +85,8 @@ func createSession(res http.ResponseWriter, req *http.Request, user User) {
 
 	// Set memcache
 	sd := memcache.Item{
-		Key:        id.String(),
-		Value:      json,
+		Key:   id.String(),
+		Value: json,
 	}
 	memcache.Set(ctx, &sd)
 }
@@ -95,28 +94,27 @@ func createSession(res http.ResponseWriter, req *http.Request, user User) {
 func loginProcess(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	ctx := appengine.NewContext(req)
 	username := req.FormValue("username")
-	pw := req.FormValue("password")
 
 	// Set up user dst
 	var user User
 
 	key := datastore.NewKey(ctx, "Users", username, 0, nil)
 	err := datastore.Get(ctx, key, &user)
-	if err != nil || pw != user.Password {
+	if err != nil || bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.FormValue("password"))) != nil {
 		// Fail to log in
 		var sd SessionData
 		sd.LoginFail = true
 		tpl.ExecuteTemplate(res, "index.html", sd)
 		return
-	} else {
-		user.UserName = username
-		// success at loggin in
-		createSession(res, req, user)
-		// Redirect to homepage
-		http.Redirect(res, req, "/", 302)
 	}
+	user.UserName = username
+	// success at logging in
+	createSession(res, req, user)
+	// Redirect to homepage
+	http.Redirect(res, req, "/", 302)
 }
-func logout(res http.Response, req *http.Request, _ httprouter.Params) {
+
+func logout(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	ctx := appengine.NewContext(req)
 
 	// Check for session cookie
@@ -129,8 +127,8 @@ func logout(res http.Response, req *http.Request, _ httprouter.Params) {
 
 	//clear MEMCACHE and COOKIE if set
 	sd := memcache.Item{
-		Key:		cookie.Value,
-		Value:		[]byte(""),
+		Key:        cookie.Value,
+		Value:      []byte(""),
 		Expiration: time.Duration(1 * time.Microsecond),
 	}
 	memcache.Set(ctx, &sd)

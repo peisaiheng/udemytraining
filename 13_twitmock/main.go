@@ -11,14 +11,14 @@ var tpl *template.Template
 func init() {
 	// Define routes
 	r := httprouter.New()
-	r.GET("/", Home)
-	r.GET("/form/signup", Signup)
+	r.GET("/", home)
+	r.GET("/form/signup", signup)
 
 	// Define APIs
 	r.POST("/api/checkusername", checkUsername)
 	r.POST("/api/createuser", createUser)
 	r.POST("/api/login", loginProcess)
-//	r.GET("/api/logout", logout)
+	r.GET("/api/logout", logout)
 
 	// Set router for HTTP
 	http.Handle("/", r)
@@ -30,11 +30,11 @@ func init() {
 }
 
 // Render templates
-func Home(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+func home(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	serveTemplate(res, req, "index.html")
 }
 
-func Signup(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+func signup(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	serveTemplate(res, req, "signup.html")
 
 }
