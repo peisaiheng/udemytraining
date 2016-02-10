@@ -107,3 +107,10 @@ body {
       /* Safari */
       -ms-flex-positive: 3;
       flex-grow: 3; }
+
+#tweets textarea {
+  resize: none;
+  max-width: 100%; }
+
+#tweets .row {
+  margin-bottom: 15px; }

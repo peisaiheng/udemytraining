@@ -1,5 +1,7 @@
 package main
 
+import "time"
+
 type User struct {
 	Email    string
 	UserName string `datastore:"-"`
@@ -10,4 +12,11 @@ type SessionData struct {
 	User
 	LoggedIn  bool
 	LoginFail bool
+	Tweets    []Tweet
+}
+
+type Tweet struct {
+	Msg      string
+	Time     time.Time
+	UserName string
 }

@@ -1,0 +1,30 @@
+{{template "header" .}}
+<div class="Site-content">
+  <div class="container">
+    <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+      <div id="tweets" class="starter-template">
+        <div class="row">
+          <h1>Hello {{.UserName}},</h1>
+          <form action="api/posttweet" method="post">
+            <div class="form-group">
+              <label for="postTweet" class="sr-only">Post Tweet</label>
+              <textarea id="postTweet" rows="3" type="text" name="tweet" class="form-control"></textarea>
+            </div>
+            <button type="submit" class="btn btn-success pull-right">Tweet</button>
+          </form>
+        </div>
+        {{range .Tweets}}
+        <div class="row">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">{{.UserName}} . <small>{{humanize_time .Time}}</small></h3>
+            </div>
+            <div class="panel-body">{{.Msg}}</div>
+          </div>
+        </div>
+        {{end}}
+      </div>
+    </div>
+  </div>
+</div>
+{{template "footer"}}

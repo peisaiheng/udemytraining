@@ -57,7 +57,7 @@ func createUser(res http.ResponseWriter, req *http.Request, _ httprouter.Params)
 	}
 
 	createSession(res, req, user)
-	http.Redirect(res, req, "/", 302)
+	http.Redirect(res, req, "/tweets", 302)
 }
 
 func createSession(res http.ResponseWriter, req *http.Request, user User) {
@@ -111,7 +111,7 @@ func loginProcess(res http.ResponseWriter, req *http.Request, _ httprouter.Param
 	// success at logging in
 	createSession(res, req, user)
 	// Redirect to homepage
-	http.Redirect(res, req, "/", 302)
+	http.Redirect(res, req, "/tweets", 302)
 }
 
 func logout(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
@@ -138,4 +138,44 @@ func logout(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 
 	// redirect
 	http.Redirect(res, req, "/", 302)
+}
+
+func postTweet(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+	ctx := appengine.NewContext(req)
+
+	// Check to see if user is logged in
+	// Reject post if user is not logged in
+	memItem, err := getSession(req)
+	if err != nil {
+		log.Infof(ctx, "Attempt to tweet from logged out user")
+		http.Error(res, "You must be logged in.", http.StatusForbidden)
+		return
+	}
+
+	// Declare variable of type user
+	// Initialize with values from MEMCACHE item
+	var user User
+	json.Unmarshal(memItem.Value, &user)
+
+	// Declare variable of type tweet
+	// Initialize with form values
+	tweet := Tweet{
+		Msg:      req.FormValue("tweet"),
+		Time:     time.Now(),
+		UserName: user.UserName,
+	}
+
+	// Store tweet in datastore
+	// using incomplete key with user as parent
+	userKey := datastore.NewKey(ctx, "Users", user.UserName, 0, nil)
+	tweetKey := datastore.NewIncompleteKey(ctx, "Tweets", userKey)
+	_, err = datastore.Put(ctx, tweetKey, &tweet)
+	if err != nil {
+		log.Errorf(ctx, "error adding todo: %v", err)
+		http.Error(res, err.Error(), 500)
+		return
+	}
+
+	// Redirect user back to home page
+	http.Redirect(res, req, "/tweets", 302)
 }
