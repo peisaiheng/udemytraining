@@ -104,8 +104,7 @@ func loginProcess(res http.ResponseWriter, req *http.Request, _ httprouter.Param
 		// Fail to log in
 		var sd SessionData
 		sd.LoginFail = true
-		tpl.ExecuteTemplate(res, "index.html", sd)
-		return
+		http.Redirect(res, req, "/", 302)
 	}
 	user.UserName = username
 	// success at logging in
