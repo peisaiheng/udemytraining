@@ -36,22 +36,32 @@ form.submit(function(e){
 });
 
 function validatePasswords() {
-        $("#helpBlock2").text("");
-        if (p1.val() == '' || p2.val() == '') {
-            $("#helpBlock2").text('Enter a password.');
-            return false;
-        }
-        if ( p1.val().length < 1) {
-        	$("#helpBlock2").html('Password cannot be blank');
-            return false;
-        }
-        if (p1.val() !== p2.val()) {
-            $("#helpBlock2").html('Your passwords did not match.<br/>Please re-enter your passwords.');
-            return false;
-        }
-        if ( (un.parent().hasClass("has-error") === true) ) {
-        	$("#helpBlock2").html('Please use a validate username');
-        	return false;
-        }
-        return true;
-    };
+    $("#helpBlock2").text("");
+    if (p1.val() == '' || p2.val() == '') {
+        $("#helpBlock2").text('Enter a password.');
+        return false;
+    }
+    if ( p1.val().length < 1) {
+    	$("#helpBlock2").html('Password cannot be blank');
+        return false;
+    }
+    if (p1.val() !== p2.val()) {
+        $("#helpBlock2").html('Your passwords did not match.<br/>Please re-enter your passwords.');
+        return false;
+    }
+    if ( (un.parent().hasClass("has-error") === true) ) {
+    	$("#helpBlock2").html('Please use a validate username');
+    	return false;
+    }
+    return true;
+};
+
+var tweet = document.querySelector('#tweetform')
+tweet.addEventListener('submit', function(e){
+    if (document.querySelector('#postTweet').value.length < 1) {
+        e.preventDefault();
+        var helpText = "Tweet cannot be empty"
+        document.querySelector('#helpTweet').textContent = helpText
+        console.log(helpText)
+    }
+})

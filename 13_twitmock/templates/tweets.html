@@ -5,10 +5,11 @@
       <div id="tweets" class="starter-template">
         <div class="row">
           <h1>Hello {{.UserName}},</h1>
-          <form action="api/posttweet" method="post">
+          <form id="tweetform" action="api/posttweet" method="post">
             <div class="form-group">
               <label for="postTweet" class="sr-only">Post Tweet</label>
               <textarea id="postTweet" rows="3" type="text" name="tweet" class="form-control"></textarea>
+              <span id="helpTweet" class="help-block"></span>
             </div>
             <button type="submit" class="btn btn-success pull-right">Tweet</button>
           </form>
