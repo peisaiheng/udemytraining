@@ -168,12 +168,14 @@ func postTweet(res http.ResponseWriter, req *http.Request, _ httprouter.Params) 
 	// using incomplete key with user as parent
 	userKey := datastore.NewKey(ctx, "Users", user.UserName, 0, nil)
 	tweetKey := datastore.NewIncompleteKey(ctx, "Tweets", userKey)
-	_, err = datastore.Put(ctx, tweetKey, &tweet)
+	ukey, err := datastore.Put(ctx, tweetKey, &tweet)
 	if err != nil {
 		log.Errorf(ctx, "error adding todo: %v", err)
 		http.Error(res, err.Error(), 500)
 		return
 	}
+	var newTweet Tweet
+	err = datastore.Get(ctx, ukey, newTweet)
 
 	// Redirect user back to home page
 	http.Redirect(res, req, "/tweets", 302)
