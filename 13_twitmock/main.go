@@ -14,6 +14,7 @@ func init() {
 	r := httprouter.New()
 	r.GET("/", home)
 	r.GET("/form/signup", signup)
+	r.GET("/form/signin", signin)
 	r.GET("/tweets", tweets)
 
 	// Define APIs
@@ -43,6 +44,10 @@ func home(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 
 func signup(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	serveTemplate(res, req, "signup.html")
+}
+
+func signin(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+	serveTemplate(res, req, "signin.html")
 }
 
 func tweets(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {

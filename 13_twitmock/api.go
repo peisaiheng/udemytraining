@@ -102,9 +102,8 @@ func loginProcess(res http.ResponseWriter, req *http.Request, _ httprouter.Param
 	err := datastore.Get(ctx, key, &user)
 	if err != nil || bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.FormValue("password"))) != nil {
 		// Fail to log in
-		var sd SessionData
-		sd.LoginFail = true
-		http.Redirect(res, req, "/", 302)
+		http.Redirect(res, req, "/form/signin", 302)
+		return
 	}
 	user.UserName = username
 	// success at logging in

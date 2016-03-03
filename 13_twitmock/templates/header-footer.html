@@ -27,7 +27,7 @@
               <ul role="menu" class="dropdown-menu">
                 <li><a href="#">{{.Email}}</a></li>
                 <li><a href="#">{{.UserName}}</a></li>
-                <li><a href="#">{{.LoggedIn}}</a></li>
+                <li><a href="#">{{.LoginFail}}</a></li>
                 <li class="divider"></li>
                 <li class="dropdown-header">Nav header</li>
                 <li><a href="#">Separated link</a></li>
@@ -38,6 +38,14 @@
           {{if .LoggedIn}}
           <form action="/api/logout" method="get" class="navbar-form navbar-right">
             <button type="submit" class="btn btn-success">Sign out</button>
+          </form>
+          {{else if .LoginFail}}
+          <form action="/api/login" method="post" class="navbar-form navbar-right">
+            <div class="form-group">
+              <a href="/form/signup">
+                <button type="button" class="btn btn-primary">Sign up</button>
+              </a>
+            </div>
           </form>
           {{else}}
           <form action="/api/login" method="post" class="navbar-form navbar-right">

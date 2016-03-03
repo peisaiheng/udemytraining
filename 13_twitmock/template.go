@@ -17,6 +17,12 @@ func serveTemplate(res http.ResponseWriter, req *http.Request, templateName stri
 		// Redirect user if they access tweet page
 		if templateName == "tweets.html" {
 			http.Redirect(res, req, "/", 302)
+			return
+		}
+		// Execute template with LoginFail is true
+		if templateName ==  "signin.html"{
+			tpl.ExecuteTemplate(res, templateName, &SessionData{LoginFail:true})
+			return
 		}
 		// execute template with empty session data
 		tpl.ExecuteTemplate(res, templateName, &SessionData{})
@@ -27,7 +33,7 @@ func serveTemplate(res http.ResponseWriter, req *http.Request, templateName stri
 
 	// Redirect user to home page
 	// if user goes to signup page
-	if templateName == "signup.html" {
+	if templateName == "signup.html" || templateName == "signin.html" {
 		http.Redirect(res, req, "/tweets", 302)
 	}
 
